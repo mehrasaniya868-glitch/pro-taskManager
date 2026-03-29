@@ -1,0 +1,202 @@
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+.app {
+  width: 520px;
+  margin: 60px auto;
+  padding: 25px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  text-align: center;
+  color: white;
+}
+
+
+h1 {
+  margin-bottom: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+
+input {
+  width: 70%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+
+button {
+  padding: 10px 15px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #ff7eb3;
+  color: rgb(90, 7, 7);
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.08);
+  background: #ff4f9a;
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+
+li {
+  background: rgba(255, 255, 255, 0.2);
+  margin: 12px 0;
+  padding: 15px;
+  border-radius: 15px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: 0.3s;
+}
+
+li:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.task-text {
+  font-size: 16px;
+}
+
+
+.task-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.task-buttons button {
+  background: rgba(255,255,255,0.3);
+  padding: 6px 10px;
+}
+
+.task-buttons button:hover {
+  background: rgba(255,255,255,0.6);
+  color: black;
+}
+
+
+.high {
+  background: #ff4d4d;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.medium {
+  background: #ffa500;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.low {
+  background: #38bf57;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+
+li.completed .task-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.filters button {
+  padding: 8px 14px;
+  margin: 5px;
+  border: none;
+  border-radius: 20px;
+  background-color: #eee;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filters button:hover {
+  background-color: #ddd;
+}
+
+.filters button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+.empty {
+  list-style: none;
+  text-align: center;
+  color: #88888817;
+  margin-top: 20px;
+  font-style: italic;
+}
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.input-section input,
+.input-section select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input,
+.row select {
+  flex: 1;
+}
+
+.input-section button {
+  background: #ff6b9e;
+  color: rgb(90, 3, 3);
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.filters button {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background-color: #ddd;
+  margin: 5px;
+  cursor: pointer;
+}
+
+
+.filters button.active {
+  background-color: green;
+  color: white;
+}

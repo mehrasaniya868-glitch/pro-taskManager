@@ -1,0 +1,96 @@
+
+.weekly-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 15px;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.weekly-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.day-item {
+  background: rgba(255,255,255,0.2);
+  padding: 10px 15px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.day-item:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+
+.day-active {
+  background: #fff;
+  color: #333;
+  font-weight: bold;
+}
+
+.task-list {
+  margin-top: 20px;
+  background: #fff;
+  color: #333;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+
+.task-card {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.task-card:last-child {
+  border-bottom: none;
+}
+
+.task-title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+
+.task-date {
+  font-size: 13px;
+  color: gray;
+}
+
+.app {
+  background-color: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+
+.app.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.app.dark button {
+  background-color: #333;
+  color: #fff;
+}
+
+.app.dark li {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+
+.app.dark input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #555;
+}
