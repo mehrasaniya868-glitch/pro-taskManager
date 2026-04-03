@@ -41,3 +41,12 @@
   color: #888;
 }
   
+.app.dark {
+  background-color: #121212;
+  color: white;
+}
+
+.app.dark li {
+  background-color: #1e1e1e;
+  color: white;
+}

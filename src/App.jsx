@@ -3,6 +3,7 @@ import TaskInput from "./components/TaskInput";
 import { Routes, Route } from "react-router-dom";
 import WeeklyReport from "./components/WeeklyReport";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 import "./App.css";
 function App() {
 
@@ -10,36 +11,46 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [taskInput, setTaskInput] = useState("");
   const[category ,setCategory] =useState("All");
-    const [categoryFilter, setCategoryFilter] = useState("All");
-    const[darkMode,setDarkMode] =useState(false);
-  const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    return savedTasks ? JSON.parse(savedTasks) : [];
-  });
- 
- 
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const[darkMode,setDarkMode] =useState(false);
+  const [tasks, setTasks] = useState([]);
+  const alertedTasks =useRef(new Set());
   const [filter, setFilter] = useState("All");
   const [priority, setPriority] = useState("Low");
   const [editIndex, setEditIndex] = useState(null);
 
- 
-  
   useEffect(() => {
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-const savedMode = localStorage.getItem("darkMode");
+   fetch ("http://localhost:5000/tasks")
+   .then(res => res.json())
+   .then(data => setTasks(data))
+    .catch(err => console.error("Error fetching tasks:", err));
+  }, []);
+
  useEffect (() => 
 {
+  const savedMode = localStorage.getItem("darkMode") === "true";
+  setDarkMode(savedMode);
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("darkMode", darkMode);
+}, [darkMode]);
+
+useEffect(() => {
 tasks.forEach((task) => {
 if (!task.dueDate || task.completed)return;
  
 const today = new Date();
 const due = new Date(task.dueDate);
 const daysDiff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-if (daysDiff > 0 && daysDiff <=3)
+if (
+  daysDiff > 0 && 
+  daysDiff <=3 &&
+ !alertedTasks.current.has(task._id)
+)
 {
   alert (`⚠ Task "${task.text}" is due in ${daysDiff} days!`);
+  alertedTasks.current.add(task._id);
 }
 });
 } ,[tasks]);
@@ -53,33 +64,35 @@ if (daysDiff > 0 && daysDiff <=3)
   }
 
   function addTask() {
+    console.log("Due Date:", dueDate);
     if (taskInput === "") {
       alert("Please enter a task");
       return;
     }
-
+  
     let autoPriority = "Low";
     const text = taskInput.toLowerCase();
 
     if (
       text.includes("study") ||
-      text.includes(" preparation forexam") ||
-      text.includes(" Submit assignment") ||
+      text.includes("preparation for exam") ||
+      text.includes("submit assignment") ||
+      text.includes("test preparation") ||
       text.includes("practical") ||
-      text.includes("Project Work") ||
-      text.includes("Medicine") ||
-      text.includes("Doctor Appointment") ||
-      text.includes("Meeting") ||
-      text.includes("Skincare") ||
-      text.includes("Health") ||
-      text.includes("Fitness") ||
-      text.includes("Exercise") ||
-      text.includes("Workout") ||
-      text.includes("Diet") ||
-      text.includes("Medication") ||
-      text.includes("Therapy") ||
-      text.includes("Mental Health") ||
-      text.includes("Self-care")
+      text.includes("project work") ||
+      text.includes("medicine") ||
+      text.includes("doctor appointment") ||
+      text.includes("meeting") ||
+      text.includes("skincare") ||
+      text.includes("health") ||
+      text.includes("fitness") ||
+      text.includes("exercise") ||
+      text.includes("workout") ||
+      text.includes("diet") ||
+      text.includes("medication") ||
+      text.includes("therapy") ||
+      text.includes("mental health") ||
+      text.includes("self-care")
       
 
     ) {
@@ -92,68 +105,80 @@ if (daysDiff > 0 && daysDiff <=3)
         text.includes("shopping") ||
         text.includes("entertainment") ||
         text.includes("hobby") ||
-        text.includes("leisure") ||
         text.includes("social") ||
         text.includes("fun") ||
         text.includes("relaxation")
     ) {
       autoPriority = "Medium";
     }
-
     if (editIndex !== null) {
-      const updatedTasks = tasks.map((task, index) => {
-        if (index === editIndex) {
-          return {
-            ...task,
-            text: taskInput,
-            priority: autoPriority,
-            dueDate: dueDate,
-            category:category ,
-            
-          };
-        }
-        return task;
-      });
-      setTasks(updatedTasks);
-      setEditIndex(null);
-    } else {
-      setTasks([
-        ...tasks,
-        {
-          text: taskInput,
-          completed: false,
-          priority: autoPriority,
-          createdAt: new Date().toLocaleString(),
-          dueDate: dueDate,
-          category:category,
-        },
-      ]);
-    }
+  const taskId = tasks[editIndex]._id;
 
+  fetch(`http://localhost:5000/tasks/${taskId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: taskInput,
+      priority: autoPriority,
+      dueDate: dueDate,
+      category: category,
+    }),
+  })
+    .then(res => res.json())
+    .then(updatedTask => {
+      setTasks(prev =>
+        prev.map(t => t._id === updatedTask._id ? updatedTask : t)
+      );
+      setEditIndex(null);
+    });
+    
+} else {
+  fetch("http://localhost:5000/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: taskInput,
+      priority: autoPriority,
+      dueDate: dueDate,
+      category: category,
+    }),
+  })
+  .then(res => res.json())
+  .then(data => {
+    setTasks(prev => [...prev, data.task]);
+  });
+  
+}
     setTaskInput("");
     setDueDate("");
   }
 
-  function deleteTask(index) {
-    setTasks(tasks.filter((_, i) => i !== index));
+  function deleteTask(id) {
+    fetch(`http://localhost:5000/tasks/${id}`, {
+      method :"DELETE",
+    })
+    .then(() => {
+      setTasks(prev =>prev.filter(task => task._id !== id));
+    })
   }
 
-  function toggleComplete(index) {
-    const newTasks = tasks.map((task, i) => {
-      if (i === index) {
-        return {
-          ...task,
-          completed: !task.completed,
-          completedAt: !task.completed
-            ? new Date().toLocaleString()
-            : null,
-        };
-      }
-      return task;
-    });
-    setTasks(newTasks);
-  }
-
+  function toggleComplete(id, currentStatus) {
+  fetch(`http://localhost:5000/tasks/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ completed: !currentStatus }),
+  })
+  .then(res => res.json())
+  .then(updatedTask => {
+    setTasks(prev => prev.map(t => t._id === id ? updatedTask : t));
+  });
+}
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((t) => t.completed).length;
   const progress = totalTasks === 0 ? 0: (completedTasks /totalTasks) * 100 ;
@@ -272,7 +297,7 @@ if (daysDiff > 0 && daysDiff <=3)
                   
               
         <li
-          key={index}
+          key={task._id}
           style={{
             backgroundColor: isOverdue ? "#ffe5e5" : "#ffffff",
             margin: "10px 0",
@@ -340,16 +365,16 @@ if (daysDiff > 0 && daysDiff <=3)
 
           <div>
 
-                   <button onClick={() =>toggleComplete(index)}>
+                   <button onClick={() =>toggleComplete(task._id, task.completed)}>
                       Complete
                     </button>
 
-                    <button onClick={() =>  deleteTask(index)} >
+                    <button onClick={() =>  deleteTask(task._id)} >
                       
                       Delete
                     </button>
                     
-                    <button onClick={() =>  handleEdit(index)}>
+                    <button onClick={() =>  handleEdit(tasks.findIndex((t) => t._id === task._id))}>
                       Edit
                     </button>
          </div>
